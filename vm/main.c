@@ -46,19 +46,34 @@ void absolute_disk_read(uint16_t lba_start, uint16_t buffer, uint8_t num_sectors
     );
 }
 
+// INT 10,E - Write Text in Teletype Mode
 VM_CFUNCTION embedded_cfunction1(VMContext* ctx) {
-    uint16_t r3 = ctx->registers[3];
-    if (r3 == 0x1337) {
-        ctx->registers[3] = 0x666;
-    }
+    uint8_t ascii_char = ctx->registers[1];
+    __asm__ __volatile__ (
+        ".intel_syntax;"
+        "mov ax, %0;"
+        "int 0x10;"
+        ".att_syntax;"
+        :
+        : "r"((uint16_t)((0xE << 8) | ascii_char))
+        : "ax"
+    );
 }
 
 static VMContext ctx;
 
+// Prints A-Z
 static char _testcode[] = {
-    0x04, 0x03, 0x37, 0x13, // loadc 3 1337
+    0x04, 0x00, 0x01, 0x00, // loadc 0 0x1
+    0x04, 0x01, 0x40, 0x00, // loadc 1 0x0040
+    0x04, 0x02, 0x5A, 0x00, // loadc 2 0x5A
+    0x04, 0x03, 0x01, 0x00, // loadc 3 0x1
+    0x04, 0x04, 0xF6, 0xFF, // loadc 4 -10/0xFFF6
+    12, 0x10, // add r1, r0
     0x05, 0x00, // callc 0
-    0x01, 0x13, // mov 1, 3
+    0x00, 0x12, // cmp r1, r2
+    0x02, 0x23, // jmpcnd r2, r3
+    0x03, 0x04, // jmp r4
 };
 
 static VM_CFUNCTION cfunctionlist[] = {
