@@ -9,3 +9,5 @@ Currently at a rough prototype; still designing vm architecture
 * Minimize bugs
 * Assembler
 * 16Script actual script compiler
+* Revise cmpflag/control flow (jmps, etc)
+* Revise callc
