@@ -1,5 +1,5 @@
 # 16Script
-Bare-metal i386 embeddable scripting language (currently vm at the moment)
+Bare-metal i386 embeddable scripting language
 
 Currently at a rough prototype; still designing vm architecture
 
